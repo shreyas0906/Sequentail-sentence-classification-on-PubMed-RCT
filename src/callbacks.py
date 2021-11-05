@@ -22,7 +22,7 @@ def tensorboard_callbacks(log_dir):
     :param log_dir: name of the directory to save the logs of training.
     :return: tensorboard object
     """
-    tensorboard = TensorBoard(log_dir='logs/'+ log_dir)
+    tensorboard = TensorBoard(log_dir=log_dir)
     return tensorboard
 
 
