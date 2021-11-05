@@ -58,7 +58,7 @@ def train(args):
     check_gpu_status()
     save_model_path = gen_model_path()
 
-    tensorboard_callback = src.callbacks.tensorboard_callbacks('logs')
+    tensorboard_callback = src.callbacks.tensorboard_callbacks('src/logs')
     reducde_lr_on_plateau = src.callbacks.reduce_lr_on_plateau()
     model_checkpoints = src.callbacks.model_checkpoint(save_model_path)
 
@@ -71,7 +71,7 @@ def train(args):
     history = model.fit(train_dataset,
                         epochs=args.epochs,
                         validation_data=validation_dataset,
-                        callbacks=[tensorboard_callback, reducde_lr_on_plateau, model_checkpoints])
+                        callbacks=[tensorboard_callback, reducde_lr_on_plateau])# , model_checkpoints
 
     print(f"Time taken to train: {(time.time() - start)/60:.2f} mins")
     model.save(save_model_path, save_format='tf')
