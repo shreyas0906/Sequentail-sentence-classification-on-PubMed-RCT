@@ -13,10 +13,10 @@ The structure of the project is as follows.
  - src/models.py
     - contains all the different network architectures to run experiments on.
  - src/data.py
-   - contains all the necessary pre-processing actions that need to be carried out to convert 
-     it into a tf.data.Dataset pipeline for the model. 
+   - contains all the necessary pre-processing actions that need to be carried out to convert the dataset
+     into a tf.data.Dataset pipeline for the model. 
  - src/callbacks.py
-   - all the callbacks for model training and monitoring is located here. 
+   - all the callbacks necessary for model training and monitoring is located here. 
  - train.py
    - uses all the above mentioned files to start training the model. 
  
