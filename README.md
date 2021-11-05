@@ -1,1 +1,1 @@
-# Sequentail-sentence-classification-on-PubMed-RCT
+# Sequential-sentence-classification-on-PubMed-RCT
