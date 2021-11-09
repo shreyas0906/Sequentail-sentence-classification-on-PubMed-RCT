@@ -85,7 +85,7 @@ if __name__ == '__main__':
     p.format_usage()
     args = p.parse_args()
 
-    if args.train:
+    if args.train == 'True':
         train(args)
 
     # loaded_model = load_model(get_latest_model_dir())
