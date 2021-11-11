@@ -67,6 +67,7 @@ def train(args):
     model = src.models.tribrid_model()
     train_dataset, validation_dataset = src.models.get_data_for_training('tribrid')
     print(model.summary())
+
     plot_model(model, to_file='tribrid.png', show_layer_names=True, show_shapes=True, dpi=96)
     history = model.fit(train_dataset,
                         epochs=args.epochs,
