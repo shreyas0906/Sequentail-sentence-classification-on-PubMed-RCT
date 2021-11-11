@@ -33,5 +33,18 @@ Everything else is pretty much self-explanatory.
 If you have any questions, please feel free to contact me at shreyas0906@gmail.com or raise an issue and i will have a
 look into it. 
 
+# Deployment with streamlit.    
 
+So I've also built in a streamlit application which can accept the input from the user, 
+process the input and display the results. 
+
+Here is a screenshot of the application 
+
+![](src/streamlit_screenshot.png)
+
+To run the streamlit application, 
+
+`streamlit run app.py`
+
+you can also access the app from [here]()
 
