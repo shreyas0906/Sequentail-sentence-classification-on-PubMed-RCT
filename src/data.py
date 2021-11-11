@@ -2,8 +2,9 @@ import pandas as pd
 import numpy as np
 import string
 import tensorflow as tf
+import json
 from tqdm import tqdm
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 
 
 def get_lines(filename):
@@ -95,6 +96,20 @@ class DataLoader:
         self.test_sentences = self.test_df["text"].tolist()
 
         one_hot_encoder = OneHotEncoder(sparse=False)
+        label_encoder = LabelEncoder()
+
+        train_labels_encoded = label_encoder.fit_transform(self.train_df["target"].to_numpy())
+        class_names = label_encoder.classes_
+        print(f"class_names: {class_names}")
+        class_labels = {}
+
+        for i, name in enumerate(class_names):
+            class_labels[str(i)] = name
+
+        with open("labels.json", "w") as f:
+            json.dump(class_labels, f)
+        print(f"saving labels to labels.json...")
+
         self.train_labels_one_hot = one_hot_encoder.fit_transform(self.train_df["target"].to_numpy().reshape(-1, 1))
         self.val_labels_one_hot = one_hot_encoder.transform(self.val_df["target"].to_numpy().reshape(-1, 1))
         self.test_labels_one_hot = one_hot_encoder.transform(self.test_df["target"].to_numpy().reshape(-1, 1))
