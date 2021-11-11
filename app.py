@@ -1,13 +1,77 @@
 import streamlit as st
+import tensorflow as tf
+from tensorflow.keras.models import load_model
+from spacy.lang.en import English
+# from src.data import split_chars
+
+
+def split_chars(text):
+    """
+    Converts a list of string to list of chars
+    :param text: string input to be converted to list of chars.
+    :return: list of chars.
+    """
+    return " ".join(list(text))
+
+
+def preprocess_predict_text(input_text):
+    language = English()
+    sentencizer = language.create_pipe("sentencizer")
+    language.add_pipe(sentencizer)
+    doc = language(input_text)
+    abstract_lines = [str(sentence) for sentence in list(doc.sents)]
+
+    # Get total number of lines
+    total_lines_in_sample = len(abstract_lines)
+
+    # Go through each line in abstract and create a list of dictionaries containing features for each line
+    sample_lines = []
+    for i, line in enumerate(abstract_lines):
+        sample_dict = {"text": str(line), "line_number": i, "total_lines": total_lines_in_sample - 1}
+        sample_lines.append(sample_dict)
+
+    test_abstract_line_numbers = [line["line_number"] for line in sample_lines]
+    # One-hot encode to same depth as training data, so model accepts right input shape
+    test_abstract_line_numbers_one_hot = tf.one_hot(test_abstract_line_numbers, depth=15)
+
+    # Get all total_lines values from sample abstract
+    test_abstract_total_lines = [line["total_lines"] for line in sample_lines]
+
+    # One-hot encode to same depth as training data, so model accepts right input shape
+    test_abstract_total_lines_one_hot = tf.one_hot(test_abstract_total_lines, depth=20)
+
+    abstract_chars = [split_chars(sentence) for sentence in abstract_lines]
+
+    loaded_model = load_serving_model()
+    test_abstract_pred_probs = loaded_model.predict(x=(test_abstract_line_numbers_one_hot,
+                                                       test_abstract_total_lines_one_hot,
+                                                       tf.constant(abstract_lines),
+                                                       tf.constant(abstract_chars)))
+
+    test_abstract_preds = tf.argmax(test_abstract_pred_probs, axis=1)
+    label = ['BACKGROUND', 'CONCLUSIONS', 'METHODS', 'OBJECTIVE', 'RESULTS']
+    test_abstract_pred_classes = [label[i] for i in test_abstract_preds]
+    display_to_ui = {"OBJECTIVE": [], "BACKGROUND": [], "CONCLUSIONS": [], "METHODS": [], "RESULTS": []}
+    # Visualize abstract lines and predicted sequence labels
+    for i, line in enumerate(abstract_lines):
+        # st.text(f"{test_abstract_pred_classes[i]}: {line}")
+        display_to_ui[test_abstract_pred_classes[i]].append(line)
+
+    return display_to_ui
+
+
+def load_serving_model():
+    serving_model = load_model('deploy_models/model')
+    return serving_model
 
 
 def main():
-    PAGE_CONFIG = {"page_title": "Sequential sentence classification on PubMed-20k RCT",
+    page_config = {"page_title": "Sequential sentence classification on PubMed-20k RCT",
                    "page_icon": '📜',
                    'layout': "centered",
                    'initial_sidebar_state': 'auto'}
 
-    st.set_page_config(**PAGE_CONFIG)
+    st.set_page_config(**page_config)
 
     menu = ["Home", "Architecture and details", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
@@ -27,19 +91,27 @@ def main():
         input_text = st.text_area("Enter abstract here")
         if st.button("Submit"):
             if len(input_text) > 0:
-                '''
-                pass the text to predict the sentences.
-                '''
+                with st.spinner("Processing..."):
+                    ui_elements = preprocess_predict_text(input_text)
+                with st.expander("Objective"):
+                    if len(ui_elements["OBJECTIVE"]) > 0:
+                        for methods in ui_elements["OBJECTIVE"]:
+                            st.text(methods)
+                with st.expander("Background"):
+                    if len(ui_elements["BACKGROUND"]) > 0:
+                        for methods in ui_elements["BACKGROUND"]:
+                            st.text(methods)
                 with st.expander("Methods"):
                     pass  # st.text() # pass the output methods here
                 with st.expander("Results"):
-                    pass
+                    if len(ui_elements["RESULTS"]) > 0:
+                        for methods in ui_elements["RESULTS"]:
+                            st.text(methods)
                 with st.expander("Conclusions"):
-                    pass
-                with st.expander("Background"):
-                    pass
-                with st.expander("Objective"):
-                    pass
+                    if len(ui_elements["CONCLUSIONS"]) > 0:
+                        for methods in ui_elements["CONCLUSIONS"]:
+                            st.text(methods)
+
             else:
                 st.error("No text data given")
 
