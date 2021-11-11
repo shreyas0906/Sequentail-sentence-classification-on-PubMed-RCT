@@ -104,7 +104,7 @@ class DataLoader:
         class_labels = {}
 
         for i, name in enumerate(class_names):
-            class_labels[str(i)] = name
+            class_labels[i] = name
 
         with open("labels.json", "w") as f:
             json.dump(class_labels, f)
