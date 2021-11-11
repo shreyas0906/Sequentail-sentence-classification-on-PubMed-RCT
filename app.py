@@ -102,7 +102,9 @@ def main():
                         for methods in ui_elements["BACKGROUND"]:
                             st.text(methods)
                 with st.expander("Methods"):
-                    pass  # st.text() # pass the output methods here
+                    if len(ui_elements["METHODS"]) > 0:
+                        for methods in ui_elements["METHODS"]:
+                            st.text(methods)
                 with st.expander("Results"):
                     if len(ui_elements["RESULTS"]) > 0:
                         for methods in ui_elements["RESULTS"]:
