@@ -8,12 +8,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 data = DataLoader(batch_size=128)
 EMBEDDING_LAYER_URL = "https://tfhub.dev/google/universal-sentence-encoder/4"
+BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
 OUTPUT_DIM = 128
 CHAR_OUTPUT_DIM = 25
 
 tf_hub_embedding_layer = hub.KerasLayer(EMBEDDING_LAYER_URL,
                                         trainable=False,
                                         name="universal_sentence_encoder")
+
+bert_layer = hub.KerasLayer(BERT_PUBMED_LAYER_URL,
+                            trainable=False,
+                            name='bert_model_layer')
 
 char_vectorizer = tf.keras.layers.TextVectorization(max_tokens=data.NUM_CHAR_TOKENS,
                                                     output_sequence_length=data.output_sequences_char_length,
@@ -59,7 +64,7 @@ def only_tokens_model():
 
 def char_and_token_model():
     token_inputs = layers.Input(shape=[], dtype=tf.string, name="token_input")
-    token_embeddings = tf_hub_embedding_layer(token_inputs)
+    token_embeddings = bert_layer(token_inputs) #tf_hub_embedding_layer(token_inputs)
     token_dense_1 = layers.Dense(256, activation='relu')(token_embeddings)
     token_dense_2 = layers.Dense(128, activation='relu')(token_dense_1)
     token_model = tf.keras.Model(inputs=token_inputs,
@@ -145,8 +150,8 @@ def tribrid_model():
 
     # 6. Combine positional embeddings with combined token and char embeddings into a tribrid embedding
     concat = layers.Concatenate(name="token_char_positional_embedding")([line_number_model.output,
-                                                                    total_line_model.output,
-                                                                    drop_1])
+                                                                         total_line_model.output,
+                                                                         drop_1])
 
     # 7. Create output layer
     output_layer_0 = layers.Dense(128, activation="relu", name="output_layer_0")(concat)
