@@ -2,7 +2,6 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from spacy.lang.en import English
-# from src.data import split_chars
 
 
 def split_chars(text):
@@ -61,7 +60,7 @@ def preprocess_predict_text(input_text):
 
 
 def load_serving_model():
-    serving_model = load_model('deploy_models/model')
+    serving_model = load_model('deploy_models/model_1')
     return serving_model
 
 
