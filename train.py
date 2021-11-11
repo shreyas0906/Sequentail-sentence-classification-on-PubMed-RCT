@@ -76,6 +76,7 @@ def train(args):
 
     print(f"Time taken to train: {(time.time() - start)/60:.2f} mins")
     model.save(save_model_path, save_format='tf')
+    print(f"Done saving the model at: {save_model_path}")
 
 
 if __name__ == '__main__':
