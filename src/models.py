@@ -8,13 +8,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 data = DataLoader(batch_size=128)
 EMBEDDING_LAYER_URL = "https://tfhub.dev/google/universal-sentence-encoder/4"
-BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
 OUTPUT_DIM = 128
 CHAR_OUTPUT_DIM = 25
 
 tf_hub_embedding_layer = hub.KerasLayer(EMBEDDING_LAYER_URL,
                                         trainable=False,
                                         name="universal_sentence_encoder")
+
+BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
 
 bert_layer = hub.KerasLayer(BERT_PUBMED_LAYER_URL,
                             trainable=False,
@@ -31,6 +32,11 @@ char_embed = layers.Embedding(input_dim=data.NUM_CHAR_TOKENS,
                               output_dim=CHAR_OUTPUT_DIM,
                               mask_zero=False,
                               name='char_embed')
+
+text_vectorizer = layers.TextVectorization(max_tokens=data.MAX_TOKENS,
+                                           output_sequence_length=data.output_sequences_len)
+
+text_vectorizer.adapt(data.train_sentences)
 
 token_embedding = layers.Embedding(input_dim=data.output_sequences_len,
                                    output_dim=OUTPUT_DIM,
@@ -64,7 +70,7 @@ def only_tokens_model():
 
 def char_and_token_model():
     token_inputs = layers.Input(shape=[], dtype=tf.string, name="token_input")
-    token_embeddings = bert_layer(token_inputs) #tf_hub_embedding_layer(token_inputs)
+    token_embeddings = tf_hub_embedding_layer(token_inputs)  # bert_layer(token_inputs)
     token_dense_1 = layers.Dense(256, activation='relu')(token_embeddings)
     token_dense_2 = layers.Dense(128, activation='relu')(token_dense_1)
     token_model = tf.keras.Model(inputs=token_inputs,
