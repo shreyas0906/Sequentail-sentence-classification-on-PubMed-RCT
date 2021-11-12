@@ -60,7 +60,7 @@ def preprocess_predict_text(input_text):
 
 
 def load_serving_model():
-    serving_model = load_model('deploy_models/model')
+    serving_model = load_model('deploy_models/model_2')
     return serving_model
 
 
