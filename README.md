@@ -42,9 +42,11 @@ Here is a screenshot of the application
 
 ![](src/streamlit_screenshot.png)
 
+Replace your trained model with model at deploy_models/
+Make changes in the app.py file in the funciton load_serving_model()
+
 To run the streamlit application, 
 
 `streamlit run app.py`
 
-you can also access the app from [here]()
 
