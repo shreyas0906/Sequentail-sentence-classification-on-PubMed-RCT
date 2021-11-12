@@ -15,6 +15,12 @@ tf_hub_embedding_layer = hub.KerasLayer(EMBEDDING_LAYER_URL,
                                         trainable=False,
                                         name="universal_sentence_encoder")
 
+BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
+
+bert_layer = hub.KerasLayer(BERT_PUBMED_LAYER_URL,
+                            trainable=False,
+                            name='bert_model_layer')
+
 char_vectorizer = tf.keras.layers.TextVectorization(max_tokens=data.NUM_CHAR_TOKENS,
                                                     output_sequence_length=data.output_sequences_char_length,
                                                     standardize="lower_and_strip_punctuation",
@@ -112,24 +118,12 @@ def tribrid_model():
     #                                         trainable=False,
     #                                         name="universal_sentence_encoder")
 
-    BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
-
-    preprocessing_layer = hub.KerasLayer('https://tfhub.dev/tensorflow/bert_en_uncased_preprocess/3',
-                                         trainable=False, name='pubmed_bert_preprocessor')
-
-    bert_layer = hub.KerasLayer(BERT_PUBMED_LAYER_URL,
-                                trainable=False,
-                                name='bert_model_layer')
-
-    token_inputs = layers.Input(shape=[], dtype=tf.string, name="token_inputs") #(1,)
-    # token_vectors = text_vectorizer(token_inputs)
-    bert_input = preprocessing_layer(token_inputs)
-    bert_embedding = bert_layer(bert_input)
-    # token_embeddings = token_embedding(token_vectors)
-    # token_embeddings = tf_hub_embedding_layer(token_inputs)
-    # token_lstm_1 = layers.LSTM(256, return_sequences=True)(token_embeddings)
-    # token_lstm_2 = layers.LSTM(128)(token_lstm_1)
-    dense_1 = layers.Dense(128, activation='relu')(bert_embedding)
+    token_inputs = layers.Input(shape=(1,), dtype=tf.string, name="token_inputs")
+    token_vectors = text_vectorizer(token_inputs)
+    token_embeddings = token_embedding(token_vectors)
+    token_lstm_1 = layers.LSTM(256, return_sequences=True)(token_embeddings)
+    token_lstm_2 = layers.LSTM(128)(token_lstm_1)
+    dense_1 = layers.Dense(128, activation='relu')(token_lstm_2)
     dense_2 = layers.Dense(64, activation='relu')(dense_1)
     token_outputs = layers.Dense(64, activation='relu')(dense_2)
     token_model = tf.keras.Model(inputs=token_inputs,
