@@ -51,9 +51,9 @@ def preprocess_predict_text(input_text):
     label = ['BACKGROUND', 'CONCLUSIONS', 'METHODS', 'OBJECTIVE', 'RESULTS']
     test_abstract_pred_classes = [label[i] for i in test_abstract_preds]
     display_to_ui = {"OBJECTIVE": [], "BACKGROUND": [], "CONCLUSIONS": [], "METHODS": [], "RESULTS": []}
+
     # Visualize abstract lines and predicted sequence labels
     for i, line in enumerate(abstract_lines):
-        # st.text(f"{test_abstract_pred_classes[i]}: {line}")
         display_to_ui[test_abstract_pred_classes[i]].append(line)
 
     return display_to_ui
