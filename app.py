@@ -14,6 +14,14 @@ def split_chars(text):
 
 
 def preprocess_predict_text(input_text):
+    """
+
+    Args:
+        input_text: unprocessed raw text from the user.
+        Needs to be tokenized and in the same format as the trained model.
+
+    Returns: processed text with line numbers
+    """
     language = English()
     sentencizer = language.create_pipe("sentencizer")
     language.add_pipe(sentencizer)
@@ -60,6 +68,7 @@ def preprocess_predict_text(input_text):
 
 
 def load_serving_model():
+    print("loading model...")
     serving_model = load_model('deploy_models/model')
     return serving_model
 

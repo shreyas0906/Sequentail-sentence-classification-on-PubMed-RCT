@@ -35,6 +35,12 @@ look into it.
 
 # Deployment with streamlit.    
 
+Download the docker container from [here]()
+
+`docker run -p 8501:8501 streamlitapp:latest`
+
+Download the model from [here]()
+
 So I've also built in a streamlit application which can accept the input from the user, 
 process the input and display the results. 
 
@@ -45,8 +51,7 @@ Here is a screenshot of the application
 Replace your trained model with model at deploy_models/
 Make changes in the app.py file in the funciton load_serving_model()
 
-To run the streamlit application, 
+To run the streamlit application,
 
-`streamlit run app.py`
-
-
+ - place the downloaded model in a folder named deploy_models/
+ - usage: `streamlit run app.py`

@@ -77,7 +77,7 @@ class DataLoader:
 
     def __init__(self, batch_size):
         self.DATA_DIR = "pubmed-rct/PubMed_20k_RCT_numbers_replaced_with_at_sign/"
-        self.MAX_TOKENS = 68000
+        self.MAX_TOKENS = 68000 + 10
         alphabets = string.ascii_lowercase + string.digits + string.punctuation
         self.NUM_CHAR_TOKENS = len(alphabets) + 2  # num of characters in alphabets + space + 'OOV' token
         self.BATCH_SIZE = batch_size

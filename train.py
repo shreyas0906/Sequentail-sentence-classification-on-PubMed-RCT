@@ -4,7 +4,6 @@ import tensorflow as tf
 import src
 from argparse import ArgumentParser
 from tensorflow.keras.utils import plot_model
-from tensorflow.keras.models import load_model
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -23,7 +22,7 @@ def gen_model_path():
         if not os.path.exists('models/' + name):
             os.makedirs('models/' + name)
 
-        return 'models/' + name #+ '/model_ssc.h5'
+        return 'models/' + name
 
 
 def get_latest_model_dir():
@@ -69,12 +68,12 @@ def train(args):
     print(model.summary())
 
     plot_model(model, to_file='tribrid.png', show_layer_names=True, show_shapes=True, dpi=96)
-    history = model.fit(train_dataset,
-                        epochs=args.epochs,
-                        validation_data=validation_dataset,
-                        callbacks=[tensorboard_callback, reducde_lr_on_plateau])# , model_checkpoints
+    model.fit(train_dataset,
+              epochs=args.epochs,
+              validation_data=validation_dataset,
+              callbacks=[tensorboard_callback, reducde_lr_on_plateau, model_checkpoints])
 
-    print(f"Time taken to train: {(time.time() - start)/60:.2f} mins")
+    print(f"Time taken to train: {(time.time() - start) / 60:.2f} mins")
     model.save(save_model_path, save_format='tf')
     print(f"Done saving the model at: {save_model_path}")
 
@@ -89,6 +88,3 @@ if __name__ == '__main__':
 
     if args.train == 'True':
         train(args)
-
-    # loaded_model = load_model(get_latest_model_dir())
-    # print(loaded_model.summary())

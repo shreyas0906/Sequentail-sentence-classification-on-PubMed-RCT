@@ -11,7 +11,7 @@ def model_checkpoint(save_model_path):
                                  monitor='accuracy',
                                  verbose=1,
                                  save_best_only=True,
-                                 save_weights_only=True,
+                                 save_weights_only=False,
                                  mode='max')
     return checkpoint
 

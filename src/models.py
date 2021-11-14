@@ -15,12 +15,6 @@ tf_hub_embedding_layer = hub.KerasLayer(EMBEDDING_LAYER_URL,
                                         trainable=False,
                                         name="universal_sentence_encoder")
 
-BERT_PUBMED_LAYER_URL = 'https://tfhub.dev/google/experts/bert/pubmed/2'
-
-bert_layer = hub.KerasLayer(BERT_PUBMED_LAYER_URL,
-                            trainable=False,
-                            name='bert_model_layer')
-
 char_vectorizer = tf.keras.layers.TextVectorization(max_tokens=data.NUM_CHAR_TOKENS,
                                                     output_sequence_length=data.output_sequences_char_length,
                                                     standardize="lower_and_strip_punctuation",
@@ -33,15 +27,16 @@ char_embed = layers.Embedding(input_dim=data.NUM_CHAR_TOKENS,
                               mask_zero=False,
                               name='char_embed')
 
-text_vectorizer = layers.TextVectorization(max_tokens=data.MAX_TOKENS,
-                                           output_sequence_length=data.output_sequences_len)
+# text_vectorizer = tf.keras.layers.TextVectorization(max_tokens=data.MAX_TOKENS,
+#                                                     output_sequence_length=data.output_sequences_len)
+#
+# text_vectorizer.adapt(data.train_sentences)
+#
+# token_embedding = layers.Embedding(input_dim=data.output_sequences_len,
+#                                    output_dim=OUTPUT_DIM,
+#                                    mask_zero=False,
+#                                    name='token_embed')
 
-text_vectorizer.adapt(data.train_sentences)
-
-token_embedding = layers.Embedding(input_dim=data.output_sequences_len,
-                                   output_dim=OUTPUT_DIM,
-                                   mask_zero=False,
-                                   name='token_embed')
 NUM_CLASSES = 5
 
 
@@ -109,23 +104,14 @@ def tribrid_model():
     :return: a compiled model which accepts char_embedding, token_embedding and positional_embedding.
     """
 
-    # text_vectorizer = layers.TextVectorization(max_tokens=data.MAX_TOKENS,
-    #                                            output_sequence_length=data.output_sequences_len)
-    #
-    # text_vectorizer.adapt(data.train_sentences)
-
-    # tf_hub_embedding_layer = hub.KerasLayer(EMBEDDING_LAYER_URL,
-    #                                         trainable=False,
-    #                                         name="universal_sentence_encoder")
-
-    token_inputs = layers.Input(shape=(1,), dtype=tf.string, name="token_inputs")
-    token_vectors = text_vectorizer(token_inputs)
-    token_embeddings = token_embedding(token_vectors)
-    token_lstm_1 = layers.LSTM(256, return_sequences=True)(token_embeddings)
-    token_lstm_2 = layers.LSTM(128)(token_lstm_1)
-    dense_1 = layers.Dense(128, activation='relu')(token_lstm_2)
-    dense_2 = layers.Dense(64, activation='relu')(dense_1)
-    token_outputs = layers.Dense(64, activation='relu')(dense_2)
+    token_inputs = layers.Input(shape=[], dtype=tf.string, name="token_inputs")
+    # token_vectors = text_vectorizer(token_inputs)
+    token_embeddings = tf_hub_embedding_layer(token_inputs)
+    # token_lstm_1 = layers.LSTM(256, return_sequences=True)(token_embeddings)
+    # token_lstm_2 = layers.LSTM(128)(token_lstm_1)
+    dense_1 = layers.Dense(512, activation='relu')(token_embeddings)
+    dense_2 = layers.Dense(256, activation='relu')(dense_1)
+    token_outputs = layers.Dense(128, activation='relu')(dense_2)
     token_model = tf.keras.Model(inputs=token_inputs,
                                  outputs=token_outputs)
 
@@ -134,19 +120,20 @@ def tribrid_model():
     char_embeddings = char_embed(char_vectors)
     char_bi_lstm_1 = layers.Bidirectional(layers.LSTM(64, return_sequences=True))(char_embeddings)
     char_bi_lstm_2 = layers.Bidirectional(layers.LSTM(64))(char_bi_lstm_1)
+    char_dense_1 = layers.Dense(128, activation='relu')(char_bi_lstm_2)
     char_model = tf.keras.Model(inputs=char_inputs,
-                                outputs=char_bi_lstm_2)
+                                outputs=char_dense_1)
 
     line_number_inputs = layers.Input(shape=(15,), dtype=tf.float32, name="line_number_input")
-    dense_3 = layers.Dense(64, activation='relu')(line_number_inputs)
-    dense_4 = layers.Dense(64, activation='relu')(dense_3)
+    dense_3 = layers.Dense(256, activation='relu')(line_number_inputs)
+    dense_4 = layers.Dense(128, activation='relu')(dense_3)
 
     line_number_model = tf.keras.Model(inputs=line_number_inputs,
                                        outputs=dense_4)
 
     total_line_inputs = layers.Input(shape=(20,), dtype=tf.int32, name="total_lines_input")
-    dense_5 = layers.Dense(64, activation="relu")(total_line_inputs)
-    dense_6 = layers.Dense(64, activation="relu")(dense_5)
+    dense_5 = layers.Dense(256, activation="relu")(total_line_inputs)
+    dense_6 = layers.Dense(128, activation="relu")(dense_5)
 
     total_line_model = tf.keras.Model(inputs=total_line_inputs,
                                       outputs=dense_6)
@@ -156,12 +143,12 @@ def tribrid_model():
                                                                                   char_model.output])
     dense_7 = layers.Dense(256, activation="relu")(combined_embeddings)
     dense_8 = layers.Dense(128, activation="relu")(dense_7)
-    drop_1 = layers.Dropout(0.2)(dense_8)
+    # drop_1 = layers.Dropout(0.2)(dense_8)
 
     # 6. Combine positional embeddings with combined token and char embeddings into a tribrid embedding
     concat = layers.Concatenate(name="token_char_positional_embedding")([line_number_model.output,
                                                                          total_line_model.output,
-                                                                         drop_1])
+                                                                         dense_8])  # drop_1
 
     # 7. Create output layer
     output_layer_0 = layers.Dense(128, activation="relu", name="output_layer_0")(concat)
