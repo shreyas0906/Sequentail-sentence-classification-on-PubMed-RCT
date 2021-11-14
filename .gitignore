@@ -30,7 +30,7 @@ pubmed-rct/*
 *.txt
 .idea/*
 src/models/*
-src/logs*
+src/logs/*
 models/*
 
 # PyInstaller
