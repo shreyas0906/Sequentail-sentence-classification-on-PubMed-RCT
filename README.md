@@ -39,7 +39,7 @@ Download the docker container from [here]()
 
 `docker run -p 8501:8501 streamlitapp:latest`
 
-Download the model from [here]()
+Download the model from [here](https://drive.google.com/file/d/1QvqNFESW9mJohhGvbiUbSqEvfiJckqsB/view?usp=sharing)
 
 So I've also built in a streamlit application which can accept the input from the user, 
 process the input and display the results. 
