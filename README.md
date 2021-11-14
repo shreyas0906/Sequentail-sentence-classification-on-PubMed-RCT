@@ -35,7 +35,11 @@ look into it.
 
 # Deployment with streamlit.    
 
-Download the docker container from [here]()
+Pull the docker container using
+
+`docker pull shreyas0906/streamlitapp`
+
+Run the docker container using
 
 `docker run -p 8501:8501 streamlitapp:latest`
 

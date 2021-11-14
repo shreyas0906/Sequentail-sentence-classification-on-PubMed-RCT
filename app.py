@@ -96,6 +96,7 @@ def main():
             "-  BACKGROUND\n"
             "-  OBJECTIVE\n")
 
+
         input_text = st.text_area("Enter abstract here")
         if st.button("Submit"):
             if len(input_text) > 0:
@@ -124,6 +125,48 @@ def main():
 
             else:
                 st.error("No text data given")
+
+        st.subheader("Sample Abstracts")
+        st.text("Hepatitis C virus (HCV) and alcoholic liver disease (ALD), either alone or in combination,\n "
+                "count for more than two thirds of all liver diseases in the Western world. There is no safe level of\n "
+                "drinking in HCV-infected patients and the most effective goal for these patients is total \n"
+                "abstinence. Baclofen, a GABA(B) receptor agonist, represents a promising pharmacotherapy for alcohol\n "
+                "dependence (AD). Previously, we performed a randomized clinical trial (RCT), which demonstrated the\n "
+                "safety and efficacy of baclofen in patients affected by AD and cirrhosis. The goal of this post-hoc\n "
+                "analysis was to explore baclofen's effect in a subgroup of alcohol-dependent HCV-infected cirrhotic\n "
+                "patients. Any patient with HCV infection was selected for this analysis. Among the 84 subjects\n "
+                "randomized in the main trial, 24 alcohol-dependent cirrhotic patients had a HCV infection; 12\n "
+                "received baclofen 10mg t.i.d. and 12 received placebo for 12-weeks. With respect to the placebo\n "
+                "group (3/12, 25.0%), a significantly higher number of patients who achieved and maintained total\n "
+                "alcohol abstinence was found in the baclofen group (10/12, 83.3%; p=0.0123). Furthermore,\n "
+                "in the baclofen group, compared to placebo, there was a significantly higher increase in albumin\n "
+                "values from baseline (p=0.0132) and a trend toward a significant reduction in INR levels from\n "
+                "baseline (p=0.0716). In conclusion, baclofen was safe and significantly more effective than placebo\n "
+                "in promoting alcohol abstinence, and improving some Liver Function Tests (LFTs) (i.e. albumin,\n "
+                "INR) in alcohol-dependent HCV-infected cirrhotic patients. Baclofen may represent a clinically \n"
+                "relevant alcohol pharmacotherapy for these patients.\n")
+
+        st.text("Mental illness, including depression, anxiety and bipolar disorder, accounts for a significant\n "
+                "proportion of global disability and poses a substantial social, economic and heath burden. Treatment\n "
+                "is presently dominated by pharmacotherapy, such as antidepressants, and psychotherapy,\n "
+                "such as cognitive behavioural therapy; however, such treatments avert less than half of the disease\n "
+                "burden, suggesting that additional strategies are needed to prevent and treat mental disorders.\n "
+                "There are now consistent mechanistic, observational and interventional data to suggest diet quality\n "
+                "may be a modifiable risk factor for mental illness. This review provides an overview of the\n "
+                "nutritional psychiatry field. It includes a discussion of the neurobiological mechanisms likely\n "
+                "modulated by diet, the use of dietary and nutraceutical interventions in mental disorders,\n "
+                "and recommendations for further research. Potential biological pathways related to mental disorders\n "
+                "include inflammation, oxidative stress, the gut microbiome, epigenetic modifications and\n "
+                "neuroplasticity. Consistent epidemiological evidence, particularly for depression, suggests an\n "
+                "association between measures of diet quality and mental health, across multiple populations and age\n "
+                "groups; these do not appear to be explained by other demographic, lifestyle factors or reverse\n "
+                "causality. Our recently published intervention trial provides preliminary clinical evidence that\n "
+                "dietary interventions in clinically diagnosed populations are feasible and can provide significant\n "
+                "clinical benefit. Furthermore, nutraceuticals including n-3 fatty acids, folate,\n "
+                "S-adenosylmethionine, N-acetyl cysteine and probiotics, among others, are promising avenues for\n "
+                "future research. Continued research is now required to investigate the efficacy of intervention\n "
+                "studies in large cohorts and within clinically relevant populations, particularly in patients with\n "
+                "schizophrenia, bipolar and anxiety disorders.\n")
 
     if choice == "Architecture and details":
         st.image('tribrid.png', caption="model architecture with character embeddings, token embeddings and "
