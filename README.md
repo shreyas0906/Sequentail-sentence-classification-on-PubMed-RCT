@@ -41,7 +41,14 @@ Pull the docker container using
 
 Run the docker container using
 
-`docker run -p 8501:8501 streamlitapp:latest`
+`docker run -p 8501:8501 shreyas0906/streamlitapp:latest`
+
+On Mac, 
+
+open a safari tab and type in
+
+`http://localhost:8501` 
+
 
 Download the model from [here](https://drive.google.com/file/d/1QvqNFESW9mJohhGvbiUbSqEvfiJckqsB/view?usp=sharing)
 
